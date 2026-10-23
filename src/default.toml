@@ -1,0 +1,92 @@
+# kerys configuration
+#
+# kerys watches the keyboard and runs a command when a key chord is pressed.
+# Saved changes are picked up automatically. If the file has an error, kerys
+# keeps the previous bindings and logs where the problem is.
+#
+# A binding's command is one of:
+#   "mode <name>"         switch to a binding mode (see [modes] below)
+#   "run <command line>"  start a program, e.g. "run notepad.exe"
+#   anything else         sent to rustWM, e.g. "focus left" or "workspace 3";
+#                         `rwm --help` lists them. "exec <command line>" asks
+#                         rustWM to start the program instead.
+
+[general]
+# Named pipe of the window manager that receives commands.
+pipe = '\\.\pipe\rustwm'
+
+# Bindings are merged over the built-in defaults shown here. Set a chord to
+# "none" to unbind it. Modifiers: win, ctrl, alt, shift.
+# Note: Win+L always locks Windows unless DisableLockWorkstation is set.
+[bindings]
+"win+h" = "focus left"
+"win+j" = "focus down"
+"win+k" = "focus up"
+"win+l" = "focus right"
+"win+left" = "focus left"
+"win+down" = "focus down"
+"win+up" = "focus up"
+"win+right" = "focus right"
+"win+shift+h" = "move left"
+"win+shift+j" = "move down"
+"win+shift+k" = "move up"
+"win+shift+l" = "move right"
+"win+shift+left" = "move left"
+"win+shift+down" = "move down"
+"win+shift+up" = "move up"
+"win+shift+right" = "move right"
+"win+n" = "focus next"
+"win+p" = "focus prev"
+"win+enter" = "terminal"
+"win+shift+enter" = "promote"
+"win+shift+q" = "close"
+"win+space" = "cycle-layout"
+"win+f" = "toggle-float"
+"win+shift+f" = "toggle-fullscreen"
+"win+equal" = "resize grow"
+"win+minus" = "resize shrink"
+"win+shift+r" = "reload"   # rustWM's config; kerys reloads its own on save
+"win+alt+r" = "mode resize"
+"win+grave" = "toggle-special scratch"
+"win+shift+grave" = "move-to-workspace special:scratch"
+"win+ctrl+r" = "retile"
+"win+alt+w" = "workspace-mode toggle"
+"win+ctrl+shift+q" = "quit"
+"win+ctrl+left" = "focus-monitor left"
+"win+ctrl+right" = "focus-monitor right"
+"win+ctrl+shift+left" = "move-to-monitor left"
+"win+ctrl+shift+right" = "move-to-monitor right"
+"win+1" = "workspace 1"
+"win+2" = "workspace 2"
+"win+3" = "workspace 3"
+"win+4" = "workspace 4"
+"win+5" = "workspace 5"
+"win+6" = "workspace 6"
+"win+7" = "workspace 7"
+"win+8" = "workspace 8"
+"win+9" = "workspace 9"
+"win+shift+1" = "move-to-workspace 1"
+"win+shift+2" = "move-to-workspace 2"
+"win+shift+3" = "move-to-workspace 3"
+"win+shift+4" = "move-to-workspace 4"
+"win+shift+5" = "move-to-workspace 5"
+"win+shift+6" = "move-to-workspace 6"
+"win+shift+7" = "move-to-workspace 7"
+"win+shift+8" = "move-to-workspace 8"
+"win+shift+9" = "move-to-workspace 9"
+# "win+t" = "run wezterm-gui.exe start --cwd ~"
+
+# Binding modes (like Hyprland submaps): while a mode is active only its
+# bindings apply; other keys type normally. Every mode needs a way back to
+# "mode default".
+[modes.resize]
+"h" = "resize shrink"
+"l" = "resize grow"
+"k" = "resize shrink"
+"j" = "resize grow"
+"left" = "resize shrink"
+"right" = "resize grow"
+"up" = "resize shrink"
+"down" = "resize grow"
+"escape" = "mode default"
+"enter" = "mode default"
