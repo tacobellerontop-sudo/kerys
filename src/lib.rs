@@ -7,6 +7,7 @@
 pub mod action;
 pub mod cmdline;
 pub mod config;
+pub mod editor;
 pub mod keys;
 #[cfg(windows)]
 pub mod watch;

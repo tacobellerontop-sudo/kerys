@@ -29,6 +29,7 @@ The rustWM release zip already contains `kerys.exe`; keep it next to `rustwm.exe
 `rwm start` brings both up. To run kerys by itself:
 
 ```powershell
+kerys gui             # settings window (also: double-click kerys.exe)
 kerys                 # run in this console (Ctrl+C to quit)
 kerys start           # run in the background, logging to %LOCALAPPDATA%\kerys\kerys.log
 kerys stop
@@ -37,6 +38,24 @@ kerys bindings        # list every binding, by mode
 ```
 
 Only one kerys runs at a time; starting a second one does nothing.
+
+### Settings window
+
+`kerys gui`, double-clicking `kerys.exe`, or "Edit keybindings" in the `rwm` menu opens
+a small window that lists your bindings by mode. In it you can:
+
+- press **Record keys** and then the chord you want, which is caught before anything else
+  sees it,
+- pick or type a command, then press **Add / update**; **Delete** removes a binding,
+- add or remove modes,
+- press **Save**: the file is checked first, the previous one is kept as
+  `kerys.toml.bak`, and the running daemon picks up the change right away.
+
+The window is a separate process that ends completely when you close it. Nothing stays
+behind: no tray icon, no hidden window. The daemon itself never draws anything. It waits
+in the keyboard hook using no CPU while idle and a few MB of memory. Saving from the
+window rewrites `kerys.toml` without your comments, so edit the file by hand if you
+want to keep them.
 
 ## Config
 

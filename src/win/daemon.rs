@@ -115,16 +115,22 @@ pub fn run() -> anyhow::Result<()> {
     Ok(())
 }
 
+/// The running kerys's control window.
+fn find() -> Option<HWND> {
+    // SAFETY: finding a message-only window by its static class name.
+    unsafe { FindWindowExW(Some(HWND_MESSAGE), None, w!("kerys"), None) }
+        .ok()
+        .filter(|h| !h.is_invalid())
+}
+
+pub fn is_running() -> bool {
+    find().is_some()
+}
+
 /// Asks a running kerys to quit. Returns false if none is running.
 pub fn stop() -> bool {
-    // SAFETY: finding a message-only window by its static class name, then
-    // posting it a message.
-    unsafe {
-        match FindWindowExW(Some(HWND_MESSAGE), None, w!("kerys"), None) {
-            Ok(hwnd) if !hwnd.is_invalid() => {
-                PostMessageW(Some(hwnd), WM_CLOSE, WPARAM(0), LPARAM(0)).is_ok()
-            }
-            _ => false,
-        }
-    }
+    // SAFETY: posting a message to the window found by class name.
+    find().is_some_and(|hwnd| unsafe {
+        PostMessageW(Some(hwnd), WM_CLOSE, WPARAM(0), LPARAM(0)).is_ok()
+    })
 }

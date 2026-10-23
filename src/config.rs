@@ -232,8 +232,12 @@ impl Config {
             }
             let mut map = BTreeMap::new();
             parse_bindings(&section, table, &mut map, &mut errors);
+            // An empty table removes a mode, built-in ones included.
+            if map.is_empty() {
+                continue;
+            }
             let back = Action::Mode(DEFAULT_MODE.into());
-            if !map.is_empty() && !map.values().any(|a| *a == back) {
+            if !map.values().any(|a| *a == back) {
                 errors.push(format!(
                     "{section}: needs a binding to \"mode {DEFAULT_MODE}\""
                 ));
@@ -390,6 +394,15 @@ mod tests {
         )
         .unwrap();
         assert_eq!(loaded.modes.len(), 2);
+    }
+
+    #[test]
+    fn empty_mode_table_removes_the_mode() {
+        let loaded = parse("[bindings]\n\"win+alt+r\" = \"none\"\n[modes.resize]\n").unwrap();
+        assert!(loaded.modes.is_empty());
+        // Still bound to it: that would trap the keyboard in an empty mode.
+        let errors = invalid("[modes.resize]\n").join("\n");
+        assert!(errors.contains("no [modes.resize]"), "{errors}");
     }
 
     #[test]

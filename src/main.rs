@@ -13,7 +13,8 @@ use tracing_subscriber::EnvFilter;
     name = "kerys",
     version,
     about = "Global hotkeys for Windows that drive rustWM",
-    after_help = "With no command, kerys runs in this console until Ctrl+C or `kerys stop`."
+    after_help = "With no command, kerys runs in this console until Ctrl+C or `kerys stop`. \
+                  Double-clicking kerys.exe opens the settings window instead."
 )]
 struct Cli {
     /// Config file to use instead of %USERPROFILE%\.config\kerys\kerys.toml.
@@ -37,12 +38,16 @@ enum Cmd {
     Check,
     /// Print every binding, by mode.
     Bindings,
+    /// Open the settings window to view and edit bindings.
+    Gui,
 }
 
 fn main() -> ExitCode {
     let cli = Cli::parse();
     let config = cli.config.clone().unwrap_or_else(config::default_path);
     let result = match cli.command {
+        Some(Cmd::Gui) => gui(&config),
+        None if cli.log.is_none() && double_clicked() => gui(&config),
         None => {
             let log = cli.log.or_else(|| {
                 let console = std::io::stderr().is_terminal();
@@ -180,6 +185,25 @@ fn run(path: &Path) -> anyhow::Result<()> {
     Ok(())
 }
 
+/// Started from Explorer rather than a terminal: Windows gave us a console
+/// of our own, which no other process shares.
+#[cfg(windows)]
+fn double_clicked() -> bool {
+    use windows::Win32::System::Console::GetConsoleProcessList;
+    let mut ids = [0u32; 2];
+    // SAFETY: a valid buffer; the call fills at most its length.
+    unsafe { GetConsoleProcessList(&mut ids) == 1 }
+}
+
+#[cfg(windows)]
+fn gui(path: &Path) -> anyhow::Result<()> {
+    use windows::Win32::System::Console::FreeConsole;
+    // Drop the console Explorer opened for us; only the window remains.
+    // SAFETY: no preconditions.
+    let _ = unsafe { FreeConsole() };
+    kerys::win::gui::run(path)
+}
+
 #[cfg(windows)]
 fn start(path: &Path) -> anyhow::Result<()> {
     use std::os::windows::process::CommandExt;
@@ -227,6 +251,16 @@ fn stop() -> anyhow::Result<()> {
 #[cfg(not(windows))]
 fn run(_path: &Path) -> anyhow::Result<()> {
     anyhow::bail!("kerys only runs on Windows")
+}
+
+#[cfg(not(windows))]
+fn double_clicked() -> bool {
+    false
+}
+
+#[cfg(not(windows))]
+fn gui(_path: &Path) -> anyhow::Result<()> {
+    anyhow::bail!("the settings window only works on Windows")
 }
 
 #[cfg(not(windows))]

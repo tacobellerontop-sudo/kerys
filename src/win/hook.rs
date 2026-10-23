@@ -75,12 +75,12 @@ fn set_mode(mode: &str) {
     }
 }
 
-fn pressed(vk: VIRTUAL_KEY) -> bool {
+pub(crate) fn pressed(vk: VIRTUAL_KEY) -> bool {
     // SAFETY: no preconditions.
     unsafe { GetAsyncKeyState(vk.0 as i32) as u16 & 0x8000 != 0 }
 }
 
-fn is_modifier(vk: u32) -> bool {
+pub(crate) fn is_modifier(vk: u32) -> bool {
     [
         VK_LWIN,
         VK_RWIN,
@@ -110,7 +110,7 @@ fn lookup(chord: &Chord) -> Option<Action> {
 }
 
 /// Taps an unassigned key so Windows sees Win+<something> and skips Start.
-fn suppress_start_menu() {
+pub(crate) fn suppress_start_menu() {
     let key = |flags| INPUT {
         r#type: INPUT_KEYBOARD,
         Anonymous: INPUT_0 {
