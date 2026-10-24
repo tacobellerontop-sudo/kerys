@@ -185,14 +185,23 @@ fn run(path: &Path) -> anyhow::Result<()> {
     Ok(())
 }
 
-/// Started from Explorer rather than a terminal: Windows gave us a console
-/// of our own, which no other process shares.
+/// Started from Explorer rather than a terminal: Windows gave us a visible
+/// console of our own, which no other process shares. rustWM starts kerys
+/// with `CREATE_NO_WINDOW`, which also gives it a console of its own, but
+/// one without a window, so that still runs the daemon.
 #[cfg(windows)]
 fn double_clicked() -> bool {
-    use windows::Win32::System::Console::GetConsoleProcessList;
+    use windows::Win32::System::Console::{GetConsoleProcessList, GetConsoleWindow};
+    use windows::Win32::UI::WindowsAndMessaging::IsWindowVisible;
     let mut ids = [0u32; 2];
-    // SAFETY: a valid buffer; the call fills at most its length.
-    unsafe { GetConsoleProcessList(&mut ids) == 1 }
+    // SAFETY: a valid buffer; the call fills at most its length. The other
+    // calls have no preconditions.
+    unsafe {
+        let console = GetConsoleWindow();
+        GetConsoleProcessList(&mut ids) == 1
+            && !console.is_invalid()
+            && IsWindowVisible(console).as_bool()
+    }
 }
 
 #[cfg(windows)]
