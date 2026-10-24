@@ -70,13 +70,13 @@ pipe = '\\.\pipe\rustwm'          # where window-manager commands go
 
 [bindings]                        # merged over the defaults; "none" unbinds
 "win+h" = "focus left"            # sent to rustWM
-"win+t" = "run wezterm-gui.exe"   # kerys starts the program itself
+"win+shift+t" = "run wezterm-gui.exe"  # kerys starts the program itself
 "win+alt+r" = "mode resize"       # switch binding mode
 "win+l" = "none"
 
 [modes.resize]                    # only these keys work while the mode is on
-"h" = "resize shrink"
-"l" = "resize grow"
+"h" = "resize left"               # move the edge to the neighbour on the left
+"l" = "resize right"
 "escape" = "mode default"         # every mode needs a way back
 ```
 
@@ -87,6 +87,28 @@ A binding's command is one of:
 | `mode <name>` | Switch to `[modes.<name>]`; `mode default` goes back to `[bindings]`. |
 | `run <command line>` | kerys starts the program. Works without rustWM. |
 | anything else | Sent to rustWM, e.g. `focus left`, `workspace 3`, `exec notepad.exe`. See `rwm --help`. |
+
+The defaults (see `src/default.toml`) cover everything rustWM does. Besides focus,
+move, workspaces and monitors, they include:
+
+| Keys | Command |
+|---|---|
+| Win + Alt + H/J/K/L or arrows | `stack <dir>`: put the window in its neighbour's tile |
+| Win + ] / Win + [ | `cycle-stack next` / `prev`: show the next window of the stack |
+| Win + Alt + U | `unstack` |
+| Win + M | `toggle-maximize` (fill the screen, keep the taskbar) |
+| Win + Shift + P | `toggle-pin` (float on every workspace) |
+| Win + C | `center` a floating window |
+| Win + T | `toggle-split` (turn a dwindle split) |
+| Win + Alt + F | `flip-layout horizontal` |
+| Win + O | `focus last` |
+| Win + Backspace | `workspace last` |
+| Win + PageUp / PageDown | `workspace prev` / `next` |
+| Win + Ctrl + Alt + Left/Right | `swap-workspaces` with the monitor that way |
+| Win + Shift + Space | `cycle-layout prev` |
+| Win + Alt + P | `toggle-pause` |
+
+In resize mode (Win + Alt + R), H/J/K/L move the focused window's edge that way.
 
 Keys: letters, digits, `f1`–`f24`, `enter`, `space`, `tab`, `escape`, `backspace`,
 `delete`, `insert`, `home`, `end`, `pageup`, `pagedown`, arrows (`left` …),
