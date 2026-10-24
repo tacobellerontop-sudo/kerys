@@ -71,6 +71,8 @@ fn set_mode(mode: &str) {
                 info!(%mode, "binding mode");
             }
             mode.clone_into(&mut m);
+            // Off the hook thread: tells Slowshell, if one is running.
+            worker::send(Action::Mode(mode.into()));
         }
     }
 }

@@ -10,7 +10,7 @@ use std::time::{Duration, Instant};
 
 use tracing::{debug, warn};
 
-use crate::action::Action;
+use crate::action::{Action, ShellCommand, mode_request};
 use crate::cmdline::split_program;
 
 /// `ERROR_PIPE_BUSY`: every server instance is serving another client.
@@ -51,7 +51,10 @@ pub fn spawn() -> io::Result<()> {
                 match action {
                     Action::Run(command_line) => run(&command_line),
                     Action::Wm(cmd) => command(&mut wm, &cmd),
-                    Action::Mode(_) => {}
+                    Action::Shell(cmd) => shell(&cmd),
+                    // The hook has already switched mode; this only tells the
+                    // desktop shell, so its bar can show it.
+                    Action::Mode(mode) => announce_mode(&mode),
                 }
             }
         })?;
@@ -69,6 +72,23 @@ fn run(command_line: &str) {
     match cmd.creation_flags(CREATE_NEW_CONSOLE).spawn() {
         Ok(_) => debug!(%command_line, "started"),
         Err(e) => warn!(%command_line, error = %e, "could not start program"),
+    }
+}
+
+/// Sends a `shell ...` binding's command to Slowshell.
+fn shell(cmd: &ShellCommand) {
+    match super::shell::request(&cmd.request()) {
+        Ok(()) => debug!(%cmd, "sent to Slowshell"),
+        Err(e) => warn!(%cmd, error = %e, "shell command failed"),
+    }
+}
+
+/// Tells Slowshell the binding mode changed. Quiet when no shell is running:
+/// plenty of people run kerys without one.
+fn announce_mode(mode: &str) {
+    match super::shell::request(&mode_request(mode)) {
+        Ok(()) | Err(super::shell::Error::NotRunning) => {}
+        Err(e) => debug!(%mode, error = %e, "could not tell Slowshell the mode"),
     }
 }
 

@@ -86,6 +86,7 @@ A binding's command is one of:
 |---|---|
 | `mode <name>` | Switch to `[modes.<name>]`; `mode default` goes back to `[bindings]`. |
 | `run <command line>` | kerys starts the program. Works without rustWM. |
+| `shell <command>` | Sent to [Slowshell](https://github.com/tacobellerontop-sudo/slowshell), e.g. `shell toggle launcher`. See below. |
 | anything else | Sent to rustWM, e.g. `focus left`, `workspace 3`, `exec notepad.exe`. See `rwm --help`. |
 
 The defaults (see `src/default.toml`) cover everything rustWM does. Besides focus,
@@ -117,6 +118,29 @@ Keys: letters, digits, `f1`–`f24`, `enter`, `space`, `tab`, `escape`, `backspa
 
 **Win + L** always locks the PC unless `DisableLockWorkstation` is set
 (`HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\System`).
+
+## Slowshell
+
+[Slowshell](https://github.com/tacobellerontop-sudo/slowshell) is a desktop shell
+(bars, launchers) for Windows. kerys works with it in two ways, and both do
+nothing if no Slowshell is running:
+
+- **`shell` bindings** send a command to Slowshell's control pipe, the same one
+  `shellctl` uses:
+
+  ```toml
+  "win+space"   = "shell toggle launcher"   # open or close a hidden panel
+  "win+shift+r" = "shell reload"            # also: open/close <panel>, overlay, stop
+  ```
+
+- **The binding mode is shown on the bar.** Every mode switch, and every start of
+  kerys, tells Slowshell the current mode, which a Slowshell config reads as
+  `kerys.mode`. That is how a bar shows "resize" while resize mode is on.
+
+kerys finds Slowshell through `%LOCALAPPDATA%\Slowshell\control.json`, so nothing
+needs configuring. Slowshell's
+[KERYS.md](https://github.com/tacobellerontop-sudo/slowshell/blob/main/docs/KERYS.md)
+has the shell side, including a ready-made bar.
 
 ## Building
 
