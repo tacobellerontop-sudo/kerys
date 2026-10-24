@@ -167,6 +167,10 @@ fn run(path: &Path) -> anyhow::Result<()> {
     };
     apply(&loaded);
     win::worker::spawn()?;
+    // A desktop shell that outlived the previous kerys may still show its mode.
+    win::worker::send(kerys::action::Action::Mode(
+        kerys::action::DEFAULT_MODE.into(),
+    ));
 
     let reload_path = path.to_path_buf();
     let _watcher = watch::watch_config(path, move || match config::load(&reload_path) {

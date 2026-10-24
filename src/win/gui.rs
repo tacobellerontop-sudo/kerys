@@ -107,6 +107,8 @@ const SUGGESTIONS: &[&str] = &[
     "exec notepad.exe",
     "run notepad.exe",
     "mode default",
+    "shell toggle launcher",
+    "shell reload",
 ];
 
 /// Window handles of the controls.
