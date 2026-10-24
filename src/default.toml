@@ -39,6 +39,7 @@ pipe = '\\.\pipe\rustwm'
 "win+p" = "focus prev"
 "win+enter" = "terminal"
 "win+shift+enter" = "promote"
+"win+q" = "close"
 "win+shift+q" = "close"
 "win+space" = "cycle-layout"
 "win+f" = "toggle-float"
