@@ -107,6 +107,9 @@ move, workspaces and monitors, they include:
 | Win + Ctrl + Alt + Left/Right | `swap-workspaces` with the monitor that way |
 | Win + Shift + Space | `cycle-layout prev` |
 | Win + Alt + P | `toggle-pause` |
+| Win + Alt + = / Win + Alt + - | `master-count +1` / `-1` (windows in the master area) |
+| Win + Alt + O | `master-side next` (move the master area round the screen) |
+| Win + Alt + M | `minimize` |
 
 In resize mode (Win + Alt + R), H/J/K/L move the focused window's edge that way.
 
